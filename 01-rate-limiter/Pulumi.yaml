@@ -1,0 +1,10 @@
+name: rate-limiter
+description: Rate Limiter exercise for Alex Xu's System Design Interview
+runtime:
+  name: nodejs
+  options:
+    packagemanager: bun
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-typescript
