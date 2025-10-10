@@ -1,0 +1,17 @@
+{
+  "name": "rate-limiter-lambda",
+  "version": "1.0.0",
+  "description": "Lambda functions for rate limiter",
+  "main": "dist/backend.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "redis": "^4.7.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
