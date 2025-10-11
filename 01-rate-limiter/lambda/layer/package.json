@@ -1,8 +1,0 @@
-{
-  "name": "redis-layer",
-  "version": "1.0.0",
-  "description": "Lambda Layer for Redis client",
-  "dependencies": {
-    "redis": "^4.7.0"
-  }
-}
