@@ -26,9 +26,10 @@ npm install
     ```
 
 3. `.env` 파일에 값들을 설정합니다:
-   - `API_URL`: API Gateway URL
+   - `API_URL`: API Gateway URL (API Gateway 직접 테스트용)
    - `API_KEY`: API Key 값 (AWS Console에서 확인)
-   - `CLOUDFRONT_URL`: CloudFront URL (선택사항)
+   - `CLOUDFRONT_API_URL`: CloudFront URL (CloudFront + WAF 테스트용)
+   - `WAF_RATE_LIMIT`: WAF IP-based rate limit (기본값: 1000)
 
 ## 테스트 실행
 
@@ -53,43 +54,59 @@ export $(cat .env | xargs) && npm run test:verbose
 
 ## 테스트 케이스
 
-### 1. Basic Functionality
+### API Gateway Rate Limiter (`api-gateway-rate-limiter.test.ts`)
+
+API Gateway의 Usage Plan을 사용한 Token Bucket 알고리즘 기반 Rate Limiting 테스트입니다.
+
+#### 1. Basic Functionality
 
 - 단일 요청 성공 확인
 - Rate limit 헤더 검증
 
-### 2. Rate Limiting Behavior
+#### 2. Burst Limit Behavior
 
-- Rate limit 이하 요청 허용 확인
-- Rate limit 초과 시 throttling 확인
-- 정확히 250개 요청 시 동작 확인
+- Burst limit 이하 요청 허용 확인
+- Burst limit 초과 시 throttling 확인
+- 정확히 burst limit만큼 요청 시 동작 확인
 
-### 3. Token Bucket Algorithm
+#### 3. Token Bucket Algorithm
 
 - 시간 경과에 따른 토큰 리필 확인
 - Burst 후 recovery 테스트
 
-### 4. Error Handling
+#### 4. Error Handling
 
 - 잘못된 API Key 처리 확인
 
-### 5. Performance Characteristics
 
-- 응답 시간 분포 측정
-- 성능 메트릭 수집
+### CloudFront WAF Rate Limiter (`cloudfront-rate-limiter.test.ts`)
+
+CloudFront + WAF를 사용한 IP 기반 Rate Limiting 테스트입니다.
+
+#### 1. CloudFront Basic Functionality
+
+- CloudFront를 통한 요청 전달 확인
+- WAF limit 이내 요청 성공 확인
+
+#### 2. IP-based Rate Limiting (WAF)
+
+- WAF IP rate limit 이하 요청 허용 확인
+- WAF IP rate limit 초과 시 차단 확인
+- 차단률(block rate) 측정
 
 ## 테스트 구조
 
 ```
 test/
-├── jest.config.js          # Jest 설정
-├── tsconfig.json           # TypeScript 설정
-├── package.json            # 의존성 관리
-├── config.ts               # 환경 변수 로드
-├── utils.ts                # 테스트 유틸리티 함수
-├── rate-limiter.test.ts    # 메인 테스트 스위트
-├── .env.example            # 환경 변수 예시
-└── README.md               # 이 파일
+├── jest.config.js                      # Jest 설정
+├── tsconfig.json                       # TypeScript 설정
+├── package.json                        # 의존성 관리
+├── config.ts                           # 환경 변수 로드
+├── utils.ts                            # 테스트 유틸리티 함수
+├── api-gateway-rate-limiter.test.ts    # API Gateway 테스트 스위트
+├── cloudfront-rate-limiter.test.ts     # CloudFront WAF 테스트 스위트
+├── .env.example                        # 환경 변수 예시
+└── README.md                           # 이 파일
 ```
 
 ## 주요 특징
@@ -112,15 +129,29 @@ test/
 
 ## 예상 결과
 
-- **250개 동시 요청**:
-  - 성공 200개 (burst limit)
-  - Rate Limited: ~50개
+### API Gateway Rate Limiter
 
-- **순차 요청 (100ms 간격)**:
-  - 토큰 리필로 인한 더 높은 성공률
+- **Burst limit 동시 요청**:
+  - 성공: burst limit 개수
+  - Rate Limited: 0개
+
+- **Burst limit 초과 요청**:
+  - 성공: burst limit 개수
+  - Rate Limited: 초과분
 
 - **토큰 리필 테스트**:
-  - 2초 대기 후 200개 토큰 추가
+  - 2초 대기 후 rate limit만큼 토큰 추가
+
+
+### CloudFront WAF Rate Limiter
+
+- **WAF limit 이내 요청**:
+  - 성공: 요청 전체
+  - WAF Blocked: 0개
+
+- **WAF limit 초과 요청**:
+  - 성공: WAF limit까지
+  - WAF Blocked: 초과분 (403 상태 코드)
 
 ## 문제 해결
 
