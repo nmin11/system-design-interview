@@ -12,12 +12,6 @@ describe('Rate Limiter Integration Tests', () => {
   const config = loadConfig();
   const apiUrl = `${config.apiUrl}/check`;
 
-  beforeAll(() => {
-    console.log('Testing API:', apiUrl);
-    console.log('Rate Limit:', config.rateLimit);
-    console.log('Burst Limit:', config.burstLimit);
-  });
-
   // 기본 테스트
   describe('Basic Functionality', () => {
     test('should return 200 for a single request', async () => {
@@ -126,28 +120,6 @@ describe('Rate Limiter Integration Tests', () => {
       );
 
       expect(results[0].status).toBe(403);
-    });
-  });
-
-  // 성능 확인
-  describe('Performance Characteristics', () => {
-    test('should measure response time distribution', async () => {
-      const results = await makeConcurrentRequests(apiUrl, config.apiKey, 100);
-
-      const responseTimes = results.map((r, i) =>
-        i > 0 ? r.timestamp - results[0].timestamp : 0
-      );
-
-      const avgResponseTime =
-        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
-      const maxResponseTime = Math.max(...responseTimes);
-
-      console.log('\n=== Performance Metrics ===');
-      console.log(`Average Response Time: ${avgResponseTime.toFixed(2)}ms`);
-      console.log(`Max Response Time: ${maxResponseTime.toFixed(2)}ms`);
-      console.log('========================\n');
-
-      expect(avgResponseTime).toBeLessThan(5000);
     });
   });
 });

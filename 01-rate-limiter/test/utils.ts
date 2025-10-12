@@ -71,6 +71,7 @@ export function aggregateResults(results: RequestResult[]): {
   total: number;
   success: number;
   rateLimited: number;
+  wafBlocked: number;
   errors: number;
   byStatus: Record<number, number>;
 } {
@@ -84,8 +85,9 @@ export function aggregateResults(results: RequestResult[]): {
     total: results.length,
     success: byStatus[200] || 0,
     rateLimited: byStatus[429] || 0,
+    wafBlocked: byStatus[403] || 0,
     errors: Object.entries(byStatus)
-      .filter(([status]) => parseInt(status) >= 400 && parseInt(status) !== 429)
+      .filter(([status]) => parseInt(status) >= 400 && parseInt(status) !== 429 && parseInt(status) !== 403)
       .reduce((sum, [, count]) => sum + count, 0),
     byStatus
   };
@@ -120,7 +122,8 @@ export function printTestResults(results: RequestResult[], showDebug: boolean = 
   console.log(`Total Requests: ${aggregated.total}`);
   console.log(`Success (200): ${aggregated.success}`);
   console.log(`Rate Limited (429): ${aggregated.rateLimited}`);
-  console.log(`Errors: ${aggregated.errors}`);
+  console.log(`WAF Blocked (403): ${aggregated.wafBlocked}`);
+  console.log(`Other Errors: ${aggregated.errors}`);
   console.log('\nBy Status Code:');
 
   Object.entries(aggregated.byStatus)
@@ -141,6 +144,14 @@ export function printTestResults(results: RequestResult[], showDebug: boolean = 
 
     if (rateLimitedIndexes.length > 0) {
       console.log(`\n[DEBUG] Rate limited request indexes (first 10): ${rateLimitedIndexes.slice(0, 10).join(', ')}`);
+    }
+
+    const wafBlockedIndexes = results
+      .map((r, idx) => r.status === 403 ? idx : -1)
+      .filter(idx => idx !== -1);
+
+    if (wafBlockedIndexes.length > 0) {
+      console.log(`\n[DEBUG] WAF blocked request indexes (first 10): ${wafBlockedIndexes.slice(0, 10).join(', ')}`);
     }
   }
 
