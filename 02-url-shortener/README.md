@@ -59,7 +59,7 @@ cd ..
 ### 2. Pulumi 설정
 
 ```bash
-pulumi config set mongodbUri --secret "mongodb+srv://username:password@cluster.mongodb.net"
+pulumi config set mongodbUri --secret "<mongodb_uri>"
 ```
 
 ### 3. 인프라 배포
