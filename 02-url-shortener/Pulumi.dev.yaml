@@ -1,0 +1,4 @@
+config:
+  aws:region: ap-northeast-2
+  url-shortener:mongodbUri:
+    secure: AAABAEMSt9Owi3gayiJd01Rs+P3q91o7OsTeQMldkrzfPGYLq3vkdO9vuogGEOix71ZEKiH8zmdImnyvlkl5iyzuYudXS545fEtw7/2oaLWosqPcqiyAVPo+5B0rTDGu4Rq65/4DkPvrZ+rff1PYtlyBp1+oyvrc5blS+m7K
