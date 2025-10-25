@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	mongoClient *MongoClient
-	snowNode    *snowflake.Node
+	repo     URLRepository
+	snowNode *snowflake.Node
 )
 
 type ShortenRequest struct {
@@ -28,7 +28,7 @@ type ShortenResponse struct {
 func init() {
 	var err error
 
-	mongoClient, err = NewMongoClient()
+	repo, err = NewMongoClient()
 	if err != nil {
 		panic(fmt.Sprintf("Failed to initialize MongoDB client: %v", err))
 	}
@@ -90,7 +90,7 @@ func handleShorten(ctx context.Context, request events.LambdaFunctionURLRequest)
 		LongURL:  req.URL,
 	}
 
-	err := mongoClient.SaveURL(ctx, mapping)
+	err := repo.SaveURL(ctx, mapping)
 	if err != nil {
 		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusInternalServerError,
@@ -116,7 +116,7 @@ func handleShorten(ctx context.Context, request events.LambdaFunctionURLRequest)
 }
 
 func handleRedirect(ctx context.Context, shortURL string) (events.LambdaFunctionURLResponse, error) {
-	mapping, err := mongoClient.GetURLByShortURL(ctx, shortURL)
+	mapping, err := repo.GetURLByShortURL(ctx, shortURL)
 	if err != nil {
 		return events.LambdaFunctionURLResponse{
 			StatusCode: http.StatusInternalServerError,

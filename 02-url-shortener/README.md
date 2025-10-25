@@ -54,11 +54,19 @@ curl -L <FUNCTION_URL>/2aB3cD
 
 ## Deployment
 
-### 1. Lambda 함수 빌드
+### 1. Lambda 함수 테스트 및 빌드
 
 ```bash
 cd lambda
 go mod download
+
+# 테스트 실행
+make test
+
+# 커버리지 확인
+make test-coverage
+
+# 빌드
 make build
 cd ..
 ```
