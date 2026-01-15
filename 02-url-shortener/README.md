@@ -4,7 +4,7 @@ Twitter Snowflake ID와 Base62 인코딩을 사용한 URL 단축 서비스
 
 ## Architecture Diagram
 
-![URL Shortener](../img/url-shortener.svg)
+![URL Shortener](./docs/url-shortener.svg)
 
 ## Architecture
 
@@ -16,6 +16,7 @@ Twitter Snowflake ID와 Base62 인코딩을 사용한 URL 단축 서비스
 - **Lambda Function URL**: Origin 서버
 
 **캐싱 전략:**
+
 - GET 요청 (redirect): 기본 1분, 최대 1시간 캐싱
 - POST 요청 (생성): 캐싱 없음
 
@@ -26,6 +27,7 @@ Twitter Snowflake ID와 Base62 인코딩을 사용한 URL 단축 서비스
 URL을 단축합니다.
 
 **Request:**
+
 ```bash
 curl -X POST <FUNCTION_URL>/shorten \
   -H "Content-Type: application/json" \
@@ -33,6 +35,7 @@ curl -X POST <FUNCTION_URL>/shorten \
 ```
 
 **Response:**
+
 ```json
 {
   "shortUrl": "2aB3cD"
@@ -44,11 +47,13 @@ curl -X POST <FUNCTION_URL>/shorten \
 단축된 URL을 원본 URL로 리다이렉션합니다.
 
 **Request:**
+
 ```bash
 curl -L <FUNCTION_URL>/2aB3cD
 ```
 
 **Response:**
+
 - 302 Found (Location 헤더에 원본 URL)
 - 404 Not Found (존재하지 않는 short URL)
 
@@ -78,10 +83,10 @@ pulumi config set mongodbUri --secret "<mongodb_uri>"
 pulumi config set enableCustomDomain false
 ```
 
-| Key | Type | Required | Default | Description |
-|-----|------|----------|---------|-------------|
-| `mongodbUri` | Secret | Yes | - | MongoDB 연결 URI |
-| `enableCustomDomain` | Boolean | No | `false` | CloudFront + SSL 활성화<br>Route53 배포 이후 활성화 |
+| Key                  | Type    | Required | Default | Description                                         |
+| -------------------- | ------- | -------- | ------- | --------------------------------------------------- |
+| `mongodbUri`         | Secret  | Yes      | -       | MongoDB 연결 URI                                    |
+| `enableCustomDomain` | Boolean | No       | `false` | CloudFront + SSL 활성화<br>Route53 배포 이후 활성화 |
 
 ### 3. 인프라 배포
 
