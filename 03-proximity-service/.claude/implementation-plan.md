@@ -1,6 +1,6 @@
 ## Phase 1: 로컬 개발
 
-- [] Docker Compose로 PostgreSQL + PostGIS 설치
+- [x] Docker Compose로 PostgreSQL + PostGIS 설치
 - [] Spring Boot로 사업장 서비스 구현
 - [] 샘플 사업장 데이터 생성
 - [] Spring Boot로 LBS 구현
