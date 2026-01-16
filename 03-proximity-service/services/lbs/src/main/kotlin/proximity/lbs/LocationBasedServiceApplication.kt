@@ -1,4 +1,4 @@
-package proximity.lbs.lbs
+package proximity.lbs
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
