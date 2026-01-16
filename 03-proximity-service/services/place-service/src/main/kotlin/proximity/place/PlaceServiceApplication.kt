@@ -1,4 +1,4 @@
-package proximity.place.place_service
+package proximity.place
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
