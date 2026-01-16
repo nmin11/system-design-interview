@@ -13,4 +13,4 @@
 
 ## Phase 3: 웹뷰 개발 (Optional)
 
-- [] Thymeleaf 혹은 Next.js로 웹 화면 구성
+- [x] Next.js + 네이버 지도로 웹 화면 구성
