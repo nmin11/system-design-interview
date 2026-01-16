@@ -22,5 +22,51 @@ services:
       retries: 5
     restart: unless-stopped
 
+  place-service:
+    build:
+      context: ./services/place-service
+      dockerfile: Dockerfile
+    container_name: proximity-place-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/proximity_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-proximity}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-proximity}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  lbs:
+    build:
+      context: ./services/lbs
+      dockerfile: Dockerfile
+    container_name: proximity-lbs
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/proximity_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-proximity}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-proximity}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_NAVER_MAP_CLIENT_ID: ${NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}
+        NEXT_PUBLIC_LBS_API_URL: http://localhost:8081
+    container_name: proximity-client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - lbs
+    restart: unless-stopped
+
 volumes:
   postgres_data:
