@@ -37,14 +37,14 @@ echo ""
 echo -e "${GREEN}[2/5] LBS 빌드...${NC}"
 cd "$PROJECT_ROOT/services/lbs"
 ./gradlew bootJar -q
-docker build -t proximity-service/lbs:${IMAGE_TAG} .
+docker build --platform linux/amd64 -t proximity-service/lbs:${IMAGE_TAG} .
 echo ""
 
 # Place Service 빌드
 echo -e "${GREEN}[3/5] Place Service 빌드...${NC}"
 cd "$PROJECT_ROOT/services/place-service"
 ./gradlew bootJar -q
-docker build -t proximity-service/place-service:${IMAGE_TAG} .
+docker build --platform linux/amd64 -t proximity-service/place-service:${IMAGE_TAG} .
 echo ""
 
 # 태그

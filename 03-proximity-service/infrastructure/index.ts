@@ -44,6 +44,19 @@ const ecsSecurityGroup = new aws.ec2.SecurityGroup(`${projectName}-ecs-sg`, {
   tags: { Name: `${projectName}-ecs-sg` },
 });
 
+// Bastion Host Security Group
+const bastionSecurityGroup = new aws.ec2.SecurityGroup(`${projectName}-bastion-sg`, {
+  vpcId: vpc.vpcId,
+  description: "Security group for Bastion Host",
+  ingress: [
+    { protocol: "tcp", fromPort: 22, toPort: 22, cidrBlocks: ["0.0.0.0/0"] },
+  ],
+  egress: [
+    { protocol: "-1", fromPort: 0, toPort: 0, cidrBlocks: ["0.0.0.0/0"] },
+  ],
+  tags: { Name: `${projectName}-bastion-sg` },
+});
+
 const rdsSecurityGroup = new aws.ec2.SecurityGroup(`${projectName}-rds-sg`, {
   vpcId: vpc.vpcId,
   description: "Security group for RDS",
@@ -54,11 +67,41 @@ const rdsSecurityGroup = new aws.ec2.SecurityGroup(`${projectName}-rds-sg`, {
       toPort: 5432,
       securityGroups: [ecsSecurityGroup.id],
     },
+    {
+      protocol: "tcp",
+      fromPort: 5432,
+      toPort: 5432,
+      securityGroups: [bastionSecurityGroup.id],
+    },
   ],
   egress: [
     { protocol: "-1", fromPort: 0, toPort: 0, cidrBlocks: ["0.0.0.0/0"] },
   ],
   tags: { Name: `${projectName}-rds-sg` },
+});
+
+// Bastion Host AMI (Amazon Linux 2023)
+const bastionAmi = aws.ec2.getAmiOutput({
+  mostRecent: true,
+  owners: ["amazon"],
+  filters: [
+    { name: "name", values: ["al2023-ami-*-x86_64"] },
+    { name: "virtualization-type", values: ["hvm"] },
+  ],
+});
+
+// Bastion Host EC2 Instance
+const bastionHost = new aws.ec2.Instance(`${projectName}-bastion`, {
+  ami: bastionAmi.id,
+  instanceType: "t3.micro",
+  subnetId: vpc.publicSubnetIds.apply(ids => ids[0]),
+  vpcSecurityGroupIds: [bastionSecurityGroup.id],
+  associatePublicIpAddress: true,
+  userData: `#!/bin/bash
+yum update -y
+yum install -y postgresql16
+`,
+  tags: { Name: `${projectName}-bastion` },
 });
 
 // ECS Cluster
@@ -222,6 +265,21 @@ new aws.iam.RolePolicyAttachment(`${projectName}-task-exec-policy`, {
   policyArn: "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
 });
 
+// CloudWatch Logs 권한 추가 (awslogs-create-group 사용을 위해 필요)
+new aws.iam.RolePolicy(`${projectName}-task-exec-logs-policy`, {
+  role: taskExecutionRole.name,
+  policy: JSON.stringify({
+    Version: "2012-10-17",
+    Statement: [
+      {
+        Effect: "Allow",
+        Action: ["logs:CreateLogGroup"],
+        Resource: "arn:aws:logs:*:*:*",
+      },
+    ],
+  }),
+});
+
 // ECS Task Definitions & Services
 const lbsRepo = repositories.find((r) => r.service === "lbs")!.repo;
 const placeRepo = repositories.find((r) => r.service === "place-service")!.repo;
@@ -235,8 +293,8 @@ const lbsTaskDefinition = new aws.ecs.TaskDefinition(`${projectName}-lbs-task`, 
   memory: "512",
   executionRoleArn: taskExecutionRole.arn,
   containerDefinitions: pulumi
-    .all([lbsRepo.repositoryUrl, database.endpoint, dbPassword])
-    .apply(([repoUrl, dbEndpoint, password]) =>
+    .all([lbsRepo.repositoryUrl, database.endpoint, dbPassword, aws.getRegionOutput().name])
+    .apply(([repoUrl, dbEndpoint, password, region]) =>
       JSON.stringify([
         {
           name: "lbs",
@@ -252,7 +310,7 @@ const lbsTaskDefinition = new aws.ecs.TaskDefinition(`${projectName}-lbs-task`, 
             logDriver: "awslogs",
             options: {
               "awslogs-group": `/ecs/${projectName}-lbs`,
-              "awslogs-region": aws.getRegionOutput().name,
+              "awslogs-region": region,
               "awslogs-stream-prefix": "ecs",
               "awslogs-create-group": "true",
             },
@@ -272,8 +330,8 @@ const placeTaskDefinition = new aws.ecs.TaskDefinition(`${projectName}-place-tas
   memory: "512",
   executionRoleArn: taskExecutionRole.arn,
   containerDefinitions: pulumi
-    .all([placeRepo.repositoryUrl, database.endpoint, dbPassword])
-    .apply(([repoUrl, dbEndpoint, password]) =>
+    .all([placeRepo.repositoryUrl, database.endpoint, dbPassword, aws.getRegionOutput().name])
+    .apply(([repoUrl, dbEndpoint, password, region]) =>
       JSON.stringify([
         {
           name: "place-service",
@@ -289,7 +347,7 @@ const placeTaskDefinition = new aws.ecs.TaskDefinition(`${projectName}-place-tas
             logDriver: "awslogs",
             options: {
               "awslogs-group": `/ecs/${projectName}-place`,
-              "awslogs-region": aws.getRegionOutput().name,
+              "awslogs-region": region,
               "awslogs-stream-prefix": "ecs",
               "awslogs-create-group": "true",
             },
@@ -353,3 +411,4 @@ export const vpcId = vpc.vpcId;
 export const albDnsName = alb.dnsName;
 export const albUrl = pulumi.interpolate`http://${alb.dnsName}`;
 export const databaseEndpoint = database.endpoint;
+export const bastionPublicIp = bastionHost.publicIp;
