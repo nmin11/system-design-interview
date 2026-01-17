@@ -1,5 +1,8 @@
+// 브라우저에서는 프록시 사용, 서버에서는 직접 호출
 const LBS_API_URL =
-  process.env.NEXT_PUBLIC_LBS_API_URL || "http://localhost:8081";
+  typeof window !== "undefined"
+    ? "/api/lbs"
+    : process.env.LBS_API_URL || "http://localhost:8081";
 
 export interface Place {
   id: number;
