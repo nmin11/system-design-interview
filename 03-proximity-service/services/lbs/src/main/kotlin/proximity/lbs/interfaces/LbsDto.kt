@@ -44,3 +44,9 @@ data class NearestResponse(
     val searchLatitude: Double,
     val searchLongitude: Double
 )
+
+data class SearchResponse(
+    val places: List<PlaceResponse>,
+    val count: Int,
+    val searchName: String
+)

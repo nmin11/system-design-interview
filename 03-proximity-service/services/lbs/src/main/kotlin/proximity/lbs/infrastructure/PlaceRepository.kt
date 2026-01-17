@@ -10,8 +10,15 @@ interface PlaceRepository : JpaRepository<Place, Long> {
 
     @Query("""
         SELECT * FROM places p
-        WHERE ST_DWithin(p.location, :point, :radius) = true
-        ORDER BY ST_Distance(p.location, :point)
+        WHERE ST_DWithin(
+            CAST(p.location AS geography),
+            CAST(:point AS geography),
+            :radius
+        ) = true
+        ORDER BY ST_Distance(
+            CAST(p.location AS geography),
+            CAST(:point AS geography)
+        )
     """, nativeQuery = true)
     fun findNearby(
         @Param("point") point: Point,
@@ -20,11 +27,21 @@ interface PlaceRepository : JpaRepository<Place, Long> {
 
     @Query("""
         SELECT * FROM places p
-        ORDER BY ST_Distance(p.location, :point)
+        ORDER BY ST_Distance(
+            CAST(p.location AS geography),
+            CAST(:point AS geography)
+        )
         LIMIT :limit
     """, nativeQuery = true)
     fun findNearest(
         @Param("point") point: Point,
         @Param("limit") limit: Int
     ): List<Place>
+
+    @Query("""
+        SELECT * FROM places p
+        WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))
+        ORDER BY p.name
+    """, nativeQuery = true)
+    fun findByNameContaining(@Param("name") name: String): List<Place>
 }

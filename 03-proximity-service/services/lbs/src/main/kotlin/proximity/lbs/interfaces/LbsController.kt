@@ -42,4 +42,17 @@ class LbsController(
         )
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/search")
+    fun searchByName(
+        @RequestParam name: String
+    ): ResponseEntity<SearchResponse> {
+        val places = lbsService.searchByName(name)
+        val response = SearchResponse(
+            places = places.map { PlaceResponse.from(it) },
+            count = places.size,
+            searchName = name
+        )
+        return ResponseEntity.ok(response)
+    }
 }

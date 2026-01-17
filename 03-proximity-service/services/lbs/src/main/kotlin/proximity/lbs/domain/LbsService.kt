@@ -23,4 +23,8 @@ class LbsService(
         val point = geometryFactory.createPoint(Coordinate(longitude, latitude))
         return placeRepository.findNearest(point, limit)
     }
+
+    fun searchByName(name: String): List<Place> {
+        return placeRepository.findByNameContaining(name)
+    }
 }
