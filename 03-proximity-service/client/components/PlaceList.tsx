@@ -37,23 +37,34 @@ export default function PlaceList({
               selectedPlace?.id === place.id ? "bg-blue-50" : ""
             }`}
           >
-            <h3 className="font-medium text-gray-900">{place.name}</h3>
-            <p className="text-sm text-gray-600 mt-1">{place.streetAddress}</p>
-            {place.phoneNumber && (
-              <p className="text-sm text-gray-500 mt-1">{place.phoneNumber}</p>
-            )}
-            <div className="flex gap-2 mt-2">
-              {place.instagramUrl && (
-                <a
-                  href={place.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-xs text-pink-600 hover:underline"
-                >
-                  Instagram
-                </a>
+            <div className="flex gap-3">
+              {place.imageUrl && (
+                <img
+                  src={place.imageUrl}
+                  alt={place.name}
+                  className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                />
               )}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-medium text-gray-900">{place.name}</h3>
+                <p className="text-sm text-gray-600 mt-1 truncate">
+                  {place.streetAddress}
+                </p>
+                {place.phoneNumber && (
+                  <p className="text-sm text-gray-500 mt-1">{place.phoneNumber}</p>
+                )}
+                {place.instagramUrl && (
+                  <a
+                    href={place.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-xs text-pink-600 hover:underline mt-1 inline-block"
+                  >
+                    Instagram
+                  </a>
+                )}
+              </div>
             </div>
           </li>
         ))}

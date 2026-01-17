@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import NaverMap from "@/components/NaverMap";
 import SearchBar from "@/components/SearchBar";
 import PlaceList from "@/components/PlaceList";
-import { searchNearby, type Place } from "@/lib/api";
+import { searchNearby, searchByName, type Place } from "@/lib/api";
 
 // 서울 중심 좌표 (강남역)
 const DEFAULT_CENTER = { lat: 37.4979, lng: 127.0276 };
@@ -12,6 +12,11 @@ const DEFAULT_CENTER = { lat: 37.4979, lng: 127.0276 };
 export default function Home() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [center, setCenter] = useState(DEFAULT_CENTER);
+  const [searchLocation, setSearchLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [searchRadius, setSearchRadius] = useState<number | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,17 +45,14 @@ export default function Home() {
           );
           setPlaces(response.places);
           setCenter({ lat: params.latitude, lng: params.longitude });
+          setSearchLocation({ lat: params.latitude, lng: params.longitude });
+          setSearchRadius(params.radius);
         } else if (params.type === "name" && params.name) {
-          // 이름 검색의 경우 현재 중심 좌표 기준으로 검색 후 필터링
-          const response = await searchNearby(
-            center.lat,
-            center.lng,
-            params.radius
-          );
-          const filtered = response.places.filter((place) =>
-            place.name.toLowerCase().includes(params.name!.toLowerCase())
-          );
-          setPlaces(filtered);
+          // 이름으로 검색
+          const response = await searchByName(params.name);
+          setPlaces(response.places);
+          setSearchLocation(null);
+          setSearchRadius(null);
         }
       } catch (err) {
         setError("검색 중 오류가 발생했습니다. 서버 연결을 확인해주세요.");
@@ -85,7 +87,7 @@ export default function Home() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* 왼쪽: 검색 + 목록 */}
           <div className="lg:col-span-1 space-y-4">
             <SearchBar onSearch={handleSearch} isLoading={isLoading} />
@@ -104,11 +106,14 @@ export default function Home() {
           </div>
 
           {/* 오른쪽: 지도 */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-md p-2 h-[600px]">
               <NaverMap
                 places={places}
                 center={center}
+                searchLocation={searchLocation}
+                searchRadius={searchRadius}
+                selectedPlace={selectedPlace}
                 onMapClick={handleMapClick}
                 onPlaceSelect={setSelectedPlace}
               />

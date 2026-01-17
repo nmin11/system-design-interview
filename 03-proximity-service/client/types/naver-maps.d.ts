@@ -25,6 +25,13 @@ declare namespace naver.maps {
     close(): void;
   }
 
+  class Circle {
+    constructor(options: CircleOptions);
+    setMap(map: Map | null): void;
+    setCenter(latlng: LatLng): void;
+    setRadius(radius: number): void;
+  }
+
   interface MapOptions {
     center?: LatLng;
     zoom?: number;
@@ -37,10 +44,12 @@ declare namespace naver.maps {
     map?: Map;
     title?: string;
     icon?: MarkerIcon;
+    zIndex?: number;
   }
 
   interface MarkerIcon {
     url?: string;
+    content?: string;
     size?: Size;
     origin?: Point;
     anchor?: Point;
@@ -51,6 +60,17 @@ declare namespace naver.maps {
     maxWidth?: number;
     borderWidth?: number;
     disableAnchor?: boolean;
+  }
+
+  interface CircleOptions {
+    map?: Map;
+    center: LatLng;
+    radius: number;
+    fillColor?: string;
+    fillOpacity?: number;
+    strokeColor?: string;
+    strokeOpacity?: number;
+    strokeWeight?: number;
   }
 
   class Size {

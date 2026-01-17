@@ -147,21 +147,26 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
         </div>
       )}
 
-      <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          검색 반경 (미터)
-        </label>
-        <select
-          value={radius}
-          onChange={(e) => setRadius(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-        >
-          <option value="1000">1km</option>
-          <option value="3000">3km</option>
-          <option value="5000">5km</option>
-          <option value="10000">10km</option>
-        </select>
-      </div>
+      {searchType === "coordinates" && (
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            검색 반경
+          </label>
+          <select
+            value={radius}
+            onChange={(e) => setRadius(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+          >
+            <option value="500">0.5km</option>
+            <option value="1000">1km</option>
+            <option value="2000">2km</option>
+            <option value="3000">3km</option>
+            <option value="5000">5km</option>
+            <option value="10000">10km</option>
+            <option value="20000">20km</option>
+          </select>
+        </div>
+      )}
 
       <button
         type="submit"
