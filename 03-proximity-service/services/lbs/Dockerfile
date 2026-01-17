@@ -1,14 +1,15 @@
 # Build stage
-FROM gradle:8.11-jdk21 AS build
+FROM bellsoft/liberica-openjdk-alpine:21 AS build
 WORKDIR /app
-COPY build.gradle.kts settings.gradle.kts ./
+COPY gradlew ./
 COPY gradle ./gradle
-RUN gradle dependencies --no-daemon || true
+COPY build.gradle.kts settings.gradle.kts ./
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon || true
 COPY src ./src
-RUN gradle bootJar --no-daemon
+RUN ./gradlew bootJar --no-daemon -x test
 
 # Runtime stage
-FROM eclipse-temurin:21-jre
+FROM bellsoft/liberica-runtime-container:jre-21-musl
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8081

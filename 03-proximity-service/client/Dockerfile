@@ -1,8 +1,8 @@
 # Build stage
 FROM node:20-alpine AS build
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package.json ./
+RUN npm install
 COPY . .
 ARG NEXT_PUBLIC_NAVER_MAP_CLIENT_ID
 ARG NEXT_PUBLIC_LBS_API_URL
