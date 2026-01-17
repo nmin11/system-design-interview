@@ -21,6 +21,16 @@ INSERT INTO places (name, image_url, street_address, lot_number, location, descr
     '0507-1362-4662'
 ),
 (
+    '클라이밍파크 성수점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230703_93%2F168835986963333Rx7_JPEG%2FIMG_8010.jpeg',
+    '서울 성동구 연무장13길 7 매니아빌딩',
+    '서울 성동구 성수동2가 273-34',
+    ST_SetSRID(ST_MakePoint(127.058085, 37.542305), 4326),
+    '성수역 3번 출구에서 4분 거리에 위치',
+    'https://www.instagram.com/climbing_park_seongsu',
+    '0507-1322-4662'
+),
+(
     '더클라임 연남점',
     'https://search.pstatic.net/common/?src=https%3A%2F%2Fnaverbooking-phinf.pstatic.net%2F20230726_2%2F1690338434284FkXEj_JPEG%2F20230707_GirlsonTop-143.jpg',
     '서울 마포구 양화로 186 3층',
@@ -47,8 +57,108 @@ INSERT INTO places (name, image_url, street_address, lot_number, location, descr
     '서울 강남구 신사동 505-7',
     ST_SetSRID(ST_MakePoint(127.019136, 37.521095), 4326),
     '지하철 신사역 3호선 6번 출구 도보 9분 거리',
-    'https://www.instagram.com/theclimb_sinsa/',
+    'https://www.instagram.com/theclimb_sinsa',
     '02-549-8821'
+),
+(
+    '더클라임 양재점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20210120_166%2F1611108698158uK8M4_PNG%2F%25BE%25E7%25C0%25E7%25C1%25A1%25C7%25C1%25B7%25CE%25BF%25EC.png',
+    '서울 강남구 남부순환로 2615 지하1층',
+    '서울 강남구 도곡동 957-11',
+    ST_SetSRID(ST_MakePoint(127.035859, 37.485138), 4326),
+    '3호선 양재역 4번 출구에서 직진 (도보 2분 거리)',
+    'https://www.instagram.com/theclimb_yangjae',
+    '02-576-8821'
+),
+(
+    '더클라임 논현점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20231206_215%2F1701834130082zQhOO_JPEG%2FKakaoTalk_20231206_123656353_03.jpg',
+    '서울 서초구 강남대로 519 지하1층',
+    '서울 서초구 반포동 723-1',
+    ST_SetSRID(ST_MakePoint(127.022262, 37.508291), 4326),
+    '논현역 4번 출구 2분 거리 및 신논현역 2번 출구 6분 거리',
+    'https://www.instagram.com/theclimb_nonhyeon',
+    '02-545-5014'
+),
+(
+    '더클라임 성수점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20250220_72%2F1740023651011uJksd_JPEG%2FKakaoTalk_20250220_124855630_19.jpg',
+    '서울 성동구 아차산로17길 49 생각공장 데시앙플렉스 B1층',
+    '서울 성동구 성수동2가 280-6',
+    ST_SetSRID(ST_MakePoint(127.065049, 37.546387), 4326),
+    E'2호선 성수역, 건대입구역 2번 출구 도보 15분\n7호선 어린이대공원 4번 출구 도보 13분',
+    'https://www.instagram.com/theclimb_seongsu',
+    '02-499-5014'
+),
+(
+    '서울숲클라이밍 잠실점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230714_100%2F1689344535905hk4jh_PNG%2F%25C0%25E1%25BD%25C7%25BD%25A3_%25B7%25CE%25B0%25ED.png',
+    '서울 송파구 백제고분로7길 49 지하1층',
+    '서울 송파구 잠실동 183-4',
+    ST_SetSRID(ST_MakePoint(127.084402, 37.510832), 4326),
+    '잠실새내역 4번 출구 버스정류장 도보 2분',
+    'https://www.instagram.com/seoulforest_jamsil',
+    '010-7710-2703'
+),
+(
+    '서울숲클라이밍 종로점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20240127_217%2F1706323086285X8NHz_PNG%2F%25C1%25BE%25B7%25CE%25BD%25A3%25B7%25CE%25B0%25ED_%25C8%25F2%25BB%25F6%25B9%25E8%25B0%25E6.png',
+    '서울 종로구 수표로 96 지하1층',
+    '서울 종로구 관수동 20',
+    ST_SetSRID(ST_MakePoint(126.989978, 37.569742), 4326),
+    E'종로3가역 15번 출구에서 도보 3분\n* 건물 입구를 바라보고 오른편에 서울숲클라이밍으로 연결되는 계단 입구가 따로 있습니다.\n* 엘리베이터 이용 시, 4호기 엘리베이터만 이용 가능합니다.',
+    'https://www.instagram.com/seoulforest_jongro',
+    '010-3289-2705'
+),
+(
+    '서울숲클라이밍 영등포점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20230714_280%2F1689343619976LmDsS_PNG%2F%25BF%25B5%25B5%25EE%25BD%25A3_%25B7%25CE%25B0%25ED.png',
+    '서울 영등포구 문래로 164 1층',
+    '서울 영등포구 문래동3가 55-16',
+    ST_SetSRID(ST_MakePoint(126.899602, 37.517355), 4326),
+    E'문래역 5번 출구로 나와 400m 직진 SK리더스뷰 1층 서울숲클라이밍\n규수당 카페 맞은편 건물 1층에 위치해 있습니다.',
+    'https://www.instagram.com/seoulforest_yeongdp',
+    '010-6686-2700'
+),
+(
+    '손상원 클라이밍짐 을지로점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fnaverbooking-phinf.pstatic.net%2F20250224_192%2F1740385369910gtBYj_PNG%2F%25B3%25D7%25C0%25CC%25B9%25F6-%25C7%25C3%25B7%25B9%25C0%25CC%25BD%25BA-%25BB%25E7%25C1%25F8%25B5%25E9-002.png',
+    '서울 중구 남대문로 125 지하1층 손상원 클라이밍짐 을지로점',
+    '서울 중구 다동 85',
+    ST_SetSRID(ST_MakePoint(126.982328, 37.568376), 4326),
+    E'을지로입구역 2번 출구 226m 도보 3분\n종각역 5번 출구에서 158m 도보 2분',
+    'https://www.instagram.com/sonclimb_euljiro',
+    '02-318-3094'
+),
+(
+    '손상원 클라이밍짐 강남역점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220814_180%2F1660464969866l39iJ_JPEG%2FKakaoTalk_20220814_170616533_07.jpg',
+    '서울 서초구 강남대로 331 지하1층',
+    '서울 서초구 서초동 1337-32',
+    ST_SetSRID(ST_MakePoint(127.029574, 37.492581), 4326),
+    '강남역 5번 출구에서 직진, 도보 4분 소요',
+    'https://www.instagram.com/sonclimb_gangnam',
+    '02-523-3094'
+),
+(
+    '손상원 클라이밍짐 판교점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20250224_164%2F1740398898241cEcKX_JPEG%2FKakaoTalk_20240509_151136463.jpg',
+    '경기 성남시 분당구 대왕판교로 670',
+    '경기 성남시 분당구 삼평동 682',
+    ST_SetSRID(ST_MakePoint(127.106997, 37.402075), 4326),
+    '유스페이스2 B동 지하 1층에 위치해 있습니다.',
+    'https://www.instagram.com/sonclimb_pangyo',
+    '031-739-8332'
+),
+(
+    'PEAKERS 클라이밍 종로',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220107_161%2F1641527724261UnAmA_JPEG%2F1641527716061.jpg',
+    '서울 종로구 돈화문로5가길 1 지하 4층',
+    '서울 종로구 돈의동 137',
+    ST_SetSRID(ST_MakePoint(126.999809, 37.571411), 4326),
+    '종로3가역 2-1번 출구에서 지하 통로를 통해 CGV로 들어오신 후 에스컬레이터를 타고 내려오세요.',
+    'https://www.instagram.com/peakers_jongro',
+    '02-526-8862'
 ),
 (
     'PEAKERS 클라이밍 신촌',
@@ -59,6 +169,16 @@ INSERT INTO places (name, image_url, street_address, lot_number, location, descr
     NULL,
     'https://www.instagram.com/peakers_sinchon',
     '02-526-8989'
+),
+(
+    'PEAKERS 클라이밍 구로',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20221104_212%2F1667547245961OFnPJ_JPEG%2FDSC02249.jpg',
+    '서울 구로구 구로중앙로 152 NC신구로점 6층',
+    '서울 구로구 구로동 573',
+    ST_SetSRID(ST_MakePoint(126.882796, 37.501206), 4326),
+    '구로역 1번 출구 통로를 건너 NC 신구로점 입장 후 엘리베이터, 에스컬레이터 탑승 후 6층',
+    'https://www.instagram.com/peakers_guro',
+    '02-526-8850'
 ),
 (
     '그립픽클라이밍짐',
@@ -81,6 +201,16 @@ INSERT INTO places (name, image_url, street_address, lot_number, location, descr
     '02-400-3845'
 ),
 (
+    '에어즈락 클라이밍 범계점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fnaverbooking-phinf.pstatic.net%2F20230917_106%2F1694936265820hMlD1_JPEG%2FIMG_20230917_101457.JPG',
+    '경기 안양시 동안구 시민대로 161 201호',
+    '경기 안양시 동안구 비산동 1107',
+    ST_SetSRID(ST_MakePoint(126.949168, 37.390485), 4326),
+    '범계역 8번 출구에서 바로 앞 횡단보도를 건너면 보이는 건물 2층입니다. (도보 1분 이내)',
+    'https://www.instagram.com/ayersrock_beomgye',
+    '031-381-3845'
+),
+(
     '클라임투더문',
     'https://search.pstatic.net/common/?src=https%3A%2F%2Fnaverbooking-phinf.pstatic.net%2F20240301_139%2F17092805870067I7FY_JPEG%2F%25B7%25CE%25B0%25ED.jpg',
     '서울 송파구 백제고분로 224 창대빌딩 지하1층',
@@ -99,4 +229,24 @@ INSERT INTO places (name, image_url, street_address, lot_number, location, descr
     NULL,
     'https://www.instagram.com/sinchon_damjang',
     '02-313-1003'
+),
+(
+    '훅클라이밍 왕십리점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fnaverbooking-phinf.pstatic.net%2F20251207_112%2F17650960264906xyNg_JPEG%2FHookClimbingW_3-1.jpg',
+    '서울 성동구 고산자로6길 40 2층 훅클라이밍',
+    '서울 성동구 행당동 140',
+    ST_SetSRID(ST_MakePoint(127.035556, 37.558262), 4326),
+    '왕십리역 9번 출구 레몬프라자 2층',
+    'https://www.instagram.com/hook_wangsimni',
+    '02-2282-4739'
+),
+(
+    '훅클라이밍 성수점',
+    'https://search.pstatic.net/common/?src=https%3A%2F%2Fnaverbooking-phinf.pstatic.net%2F20241106_164%2F17308608015835G92O_JPEG%2FIMG_5584.jpeg',
+    '서울 성동구 성수일로12길 34 3층',
+    '서울 성동구 성수동2가 289-211',
+    ST_SetSRID(ST_MakePoint(127.054570, 37.547495), 4326),
+    '성수역 1번 출구',
+    'https://www.instagram.com/hook_seongsu',
+    '02-6082-4739'
 );
