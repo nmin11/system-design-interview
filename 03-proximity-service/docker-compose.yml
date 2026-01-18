@@ -64,6 +64,8 @@ services:
     container_name: proximity-client
     ports:
       - "3000:3000"
+    environment:
+      LBS_API_URL: http://lbs:8081
     depends_on:
       - lbs
     restart: unless-stopped

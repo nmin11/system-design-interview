@@ -43,7 +43,7 @@ export default function NaverMap({
             ? `<img src="${place.imageUrl}" alt="${place.name}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;" />`
             : ""
         }
-        <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${
+        <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #000;">${
           place.name
         }</h3>
         <p style="margin: 0 0 4px 0; font-size: 13px; color: #666;">${
