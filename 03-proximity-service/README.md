@@ -33,7 +33,7 @@ cd scripts
   - Bastion IP 확인 방법: `pulumi stack output bastionPublicIp`
 
 ```sh
-psql -h proximity-service-db.<instance-id>.ap-northeast-2.rds.amazonaws.com -U proximity -d proximity
+psql -h proximity-service-db.<instance-id>.ap-northeast-2.rds.amazonaws.com -U proximity -d proximity_db
 ```
 
 - DB 비밀번호는 Pulumi config의 dbPassword 값
