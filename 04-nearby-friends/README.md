@@ -2,6 +2,105 @@
 
 System Design Interview 2권 2장 "Nearby Friends"의 Redis Pub/Sub 부분을 Erlang/OTP로 대체 구현한 프로젝트입니다.
 
+## Redis Pub/Sub vs Erlang/OTP 비교
+
+### 원본 설계 (책) vs 본 구현
+
+System Design Interview 2권에서 제안하는 아키텍처는 WebSocket 서버 + Redis Pub/Sub 조합입니다.
+본 프로젝트는 Redis Pub/Sub 부분을 Erlang/OTP의 프로세스 모델로 대체하여 구현했습니다.
+
+### 아키텍처 비교
+
+| 구분 | Redis Pub/Sub 기반 | Erlang/OTP 기반 (본 구현) |
+|------|-------------------|-------------------------|
+| **메시지 브로커** | Redis (외부 인프라) | Erlang 프로세스 (내장) |
+| **구독/발행** | Redis Channel 구독 | 프로세스 간 직접 메시지 전달 |
+| **상태 저장** | Redis Hash/Sorted Set | ETS 테이블 |
+| **연결 관리** | WebSocket 서버 + Redis 연결 | Cowboy WebSocket 핸들러 |
+| **장애 복구** | Redis Sentinel/Cluster | OTP Supervisor Tree |
+
+### 상세 비교표
+
+| 항목 | Redis Pub/Sub | Erlang/OTP | 비고 |
+|------|--------------|------------|------|
+| **지연 시간** | 네트워크 홉 추가 (App ↔ Redis) | 프로세스 내 직접 통신 | Erlang이 더 낮은 지연 |
+| **운영 복잡도** | Redis 클러스터 운영 필요 | 단일 Erlang 노드로 충분 | 인프라 단순화 |
+| **수평 확장** | Redis 클러스터 + Consistent Hashing | Erlang Distribution + pg 모듈 | 둘 다 확장 가능 |
+| **메모리 효율** | Redis 메모리 + App 메모리 | 단일 VM 내 공유 | Erlang이 더 효율적 |
+| **장애 격리** | Redis 장애 시 전체 영향 | 개별 프로세스 격리 | Erlang의 "Let it crash" |
+| **코드 복잡도** | Pub/Sub 라이브러리 의존 | gen_server 패턴 | 비슷한 수준 |
+
+### Erlang/OTP 선택의 특장점
+
+#### 1. 인프라 단순화
+
+```
+[Redis 기반]                         [Erlang 기반]
+┌─────────────┐                      ┌─────────────┐
+│ WebSocket   │                      │   Erlang    │
+│   Server    │◄──────┐              │ Application │
+└─────────────┘       │              │             │
+       │              │              │ - WebSocket │
+       ▼              │              │ - Pub/Sub   │
+┌─────────────┐       │              │ - Storage   │
+│   Redis     │───────┘              └─────────────┘
+│  Pub/Sub    │                           ▲
+└─────────────┘                      단일 프로세스로 통합
+       │
+운영해야 할 외부 인프라
+```
+
+#### 2. Actor Model의 자연스러운 매핑
+
+| 도메인 개념 | Redis 기반 | Erlang 기반 |
+|------------|-----------|-------------|
+| 사용자 | Redis Key | **프로세스** (friend_worker) |
+| 위치 정보 | Redis Hash | **프로세스 상태** + ETS |
+| 구독 관계 | Redis Channel | **프로세스 간 링크/모니터** |
+| 브로드캐스트 | PUBLISH 명령 | **메시지 전송** (!) |
+
+각 친구가 독립적인 프로세스로 존재하여 실제 도메인 모델과 1:1 매핑됩니다.
+
+#### 3. 장애 복구 (Fault Tolerance)
+
+```
+[Redis 장애 시]
+Redis 다운 → 모든 Pub/Sub 중단 → 전체 서비스 장애
+
+[Erlang 장애 시]
+friend_worker 크래시 → 해당 프로세스만 재시작 → 다른 친구들 영향 없음
+```
+
+#### 4. 성능 특성
+
+| 메트릭 | Redis Pub/Sub | Erlang/OTP |
+|--------|--------------|------------|
+| 메시지 지연 | ~1-5ms (네트워크) | ~μs (프로세스 내) |
+| 동시 연결 | Redis 연결 풀 한계 | 수백만 프로세스 가능 |
+| GC 영향 | 전체 앱 Stop-the-world | 프로세스별 개별 GC |
+| 메모리 | 직렬화 오버헤드 | 바이너리 공유 |
+
+### 트레이드오프
+
+| 장점 | 단점 |
+|------|------|
+| ✅ 외부 인프라 의존성 제거 | ❌ Erlang 학습 곡선 |
+| ✅ 낮은 지연 시간 | ❌ 생태계가 작음 |
+| ✅ 강력한 장애 격리 | ❌ 디버깅 도구 제한적 |
+| ✅ 도메인 모델과 자연스러운 매핑 | ❌ 팀 내 Erlang 경험 필요 |
+| ✅ 단일 배포 단위 | ❌ 다른 서비스와 통합 시 복잡 |
+
+### 언제 어떤 것을 선택할까?
+
+| 상황 | 추천 |
+|------|------|
+| 이미 Redis 인프라가 있음 | Redis Pub/Sub |
+| 실시간 요구사항이 엄격함 | **Erlang/OTP** |
+| 팀이 Erlang에 익숙함 | **Erlang/OTP** |
+| 마이크로서비스 아키텍처 | Redis Pub/Sub |
+| 단일 서비스로 완결 | **Erlang/OTP** |
+| 수백만 동시 연결 필요 | **Erlang/OTP** |
+
 ## 아키텍처 개요
 
 ```
