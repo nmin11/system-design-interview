@@ -1,14 +1,22 @@
 {application, otp, [
-    {description, "An OTP application"},
+    {description, "Nearby Friends - Erlang/OTP Implementation"},
     {vsn, "0.1.0"},
-    {registered, []},
+    {registered, [location_registry, friend_sup, otp_sup]},
     {mod, {otp_app, []}},
     {applications, [
         kernel,
-        stdlib
+        stdlib,
+        cowboy,
+        jsx
     ]},
-    {env, []},
+    {env, [
+        {ws_port, 8080},
+        {total_friends, 400},
+        {seoul_friends, 100},
+        {search_radius_km, 8},
+        {update_interval_ms, 15000}
+    ]},
     {modules, []},
     {licenses, ["Apache-2.0"]},
     {links, []}
- ]}.
+]}.

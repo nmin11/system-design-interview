@@ -10,7 +10,13 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
-    otp_sup:start_link().
+    case otp_sup:start_link() of
+        {ok, Pid} ->
+            spawn(fun() -> otp_sup:spawn_friends() end),
+            {ok, Pid};
+        Error ->
+            Error
+    end.
 
 stop(_State) ->
     ok.
